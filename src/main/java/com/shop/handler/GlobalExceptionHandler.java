@@ -1,7 +1,10 @@
 package com.shop.handler;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -14,6 +17,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,16 +32,28 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ApiException.class)
     ProblemDetail handleApiException(ApiException ex, HttpServletRequest request) {
         log.warn("Business exception on {} {}: {} -> {}",
-                request.getMethod(), request.getRequestURI(), ex.status(), ex.getMessage());
+                request.getMethod(), request.getRequestURI(),
+                ex.status(), ex.getMessage()
+        );
         return problem(ex.status(), ex.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ProblemDetail handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        List<String> errors = ex.getBindingResult().getFieldErrors().stream()
-                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+        Map<String, List<String>> errorsByField = ex.getBindingResult().getFieldErrors().stream()
+                .collect(
+                        Collectors.groupingBy(
+                                FieldError::getField,
+                                LinkedHashMap::new,
+                                Collectors.mapping(FieldError::getDefaultMessage, Collectors.toList())
+                        )
+                );
+
+        List<Map<String, List<String>>> errors = errorsByField.entrySet().stream()
+                .map(entry -> Map.of(entry.getKey(), entry.getValue()))
                 .toList();
-        log.warn("Validation failed on {} {}: {}", request.getMethod(), request.getRequestURI(), errors);
+
+        log.warn("Validation failed on {} {}: {}", request.getMethod(), request.getRequestURI(), errorsByField.keySet());
         ProblemDetail problem = problem(HttpStatus.BAD_REQUEST, "Request validation failed", request);
         problem.setProperty("errors", errors);
         return problem;
@@ -57,8 +73,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ProblemDetail handleMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        log.warn("Unreadable request body on {} {}: {}", request.getMethod(), request.getRequestURI(),
-                ex.getMessage());
+        log.warn("Unreadable request body on {} {}", request.getMethod(), request.getRequestURI());
         return problem(HttpStatus.BAD_REQUEST, "Request body is missing", request);
     }
 
