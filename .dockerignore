@@ -1,0 +1,9 @@
+target/
+docker/
+.git/
+.idea/
+.vscode/
+.env
+*.md
+mvnw
+mvnw.cmd
