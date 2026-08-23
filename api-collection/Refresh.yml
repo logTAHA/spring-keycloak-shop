@@ -1,0 +1,26 @@
+info:
+  name: Refresh
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://localhost:8180/realms/shop/protocol/openid-connect/token
+  body:
+    type: form-urlencoded
+    data:
+      - name: grant_type
+        value: password
+      - name: client_id
+        value: shop-front
+      - name: username
+        value: taha
+      - name: password
+        value: taha
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
