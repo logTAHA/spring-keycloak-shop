@@ -10,11 +10,13 @@ http:
     type: form-urlencoded
     data:
       - name: grant_type
-        value: refresh_token
+        value: password
       - name: client_id
         value: shop-front
-      - name: refresh_token
-        value: eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkYTQ1NTQxMy02MDBhLTRkYWEtYjZjNS04MmI3MDcxN2RiMGYifQ.eyJleHAiOjE3ODc1MTk0NzgsImlhdCI6MTc4NzUxNzY3OCwianRpIjoiZjI4ZTU0YWItMjI0MS1hOThiLTgwYWItYzM2NDBlMzIwZTFjIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgwL3JlYWxtcy9zaG9wIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgwL3JlYWxtcy9zaG9wIiwic3ViIjoiODhlMjExOGMtMmE1ZC00ZmM1LWE1ZGItOWE0NTRmOWM4ZTdhIiwidHlwIjoiUmVmcmVzaCIsImF6cCI6InNob3AtZnJvbnQiLCJzaWQiOiJadHJlQTZPbWlpLUFKb2dSc05JWUpsT00iLCJzY29wZSI6ImJhc2ljIGFjciBwcm9maWxlIHdlYi1vcmlnaW5zIHJvbGVzIGVtYWlsIiwiYXVkX3giOiJhY2NvdW50IiwicHJvdiI6ImRlZmF1bHQifQ.NoUtOPqdcRoZIMQE9P-ipbAoVazbCSFoWM36MRTtT4nt14nOr5YEU8edQFuJiL0EhCKmSAat0VC-1sq0Y_KuoA
+      - name: username
+        value: taha
+      - name: password
+        value: taha
   auth: inherit
 
 settings:

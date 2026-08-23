@@ -1,10 +1,13 @@
 spring:
   application:
     name: shop
+  mvc:
+    problemdetails:
+      enabled: true
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/shop}
     username: ${SPRING_DATASOURCE_USERNAME:shop}
-    password: ${SPRING_DATASOURCE_PASSWORD:your_password_here}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,3 +17,8 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8180/realms/shop
+
+app:
+  security:
+    public-paths:
+      - /error
