@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     ProblemDetail handleApiException(BusinessException ex, HttpServletRequest request) {
-        log.warn("Business exception on {} {}: {} -> {}",
+        log.info("Business exception on {} {}: {} -> {}",
                 request.getMethod(), request.getRequestURI(),
                 ex.status(), ex.getMessage()
         );

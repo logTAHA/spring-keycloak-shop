@@ -5,9 +5,11 @@ import com.shop.dto.product.add.UpsertProductRequest;
 import com.shop.dto.product.add.AddProductResponse;
 import com.shop.dto.product.add.UpsertProductResult;
 import com.shop.dto.product.get.GetProductRequest;
+import com.shop.dto.product.get.ProductDetailResponse;
 import com.shop.dto.product.get.ProductResponse;
 import com.shop.dto.product.get.ProductSortBy;
 import com.shop.entity.Product;
+import com.shop.handler.BusinessException;
 import com.shop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,5 +99,22 @@ public class ProductService {
             case PRICE_ASC -> Sort.by(Sort.Direction.ASC, "price");
             case PRICE_DESC -> Sort.by(Sort.Direction.DESC, "price");
         };
+    }
+
+    public ProductDetailResponse getProductByIdentifier(String identifier, boolean isAdmin) {
+        Optional<Product> productOpt;
+        if (identifier.matches("^\\d+$")) {
+            Long id = Long.parseLong(identifier);
+            productOpt = productRepository.findById(id).or(() -> productRepository.findByName(identifier));
+        } else {
+            productOpt = productRepository.findByName(identifier);
+        }
+
+        Product product = productOpt.orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "Product not found")
+        );
+
+        log.debug("Fetched product '{}' (ID: {}) with isAdmin={}", product.getName(), product.getId(), isAdmin);
+        return ProductDetailResponse.from(product, isAdmin);
     }
 }

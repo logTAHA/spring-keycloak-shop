@@ -6,6 +6,7 @@ import com.shop.dto.product.add.UpsertProductRequest;
 import com.shop.dto.product.add.AddProductResponse;
 import com.shop.dto.product.add.UpsertProductResult;
 import com.shop.dto.product.get.GetProductRequest;
+import com.shop.dto.product.get.ProductDetailResponse;
 import com.shop.dto.product.get.ProductResponse;
 import com.shop.service.ProductService;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +33,17 @@ public class ProductController {
             @Valid @ModelAttribute GetProductRequest request
     ) {
         PagedResponse<ProductResponse> response = productService.getProducts(request);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @GetMapping("/{identifier}")
+    public ResponseEntity<ApiResponse<ProductDetailResponse>> getProduct(
+            @PathVariable String identifier,
+            Authentication authentication
+    ) {
+        boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        ProductDetailResponse response = productService.getProductByIdentifier(identifier, isAdmin);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
