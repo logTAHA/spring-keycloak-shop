@@ -13,15 +13,17 @@ public record CartItemResponse(
         Long productId,
         String productName,
         BigDecimal productPrice,
-        Integer quantity
+        Integer quantity,
+        BigDecimal totalPrice
 ) {
-    public static CartItemResponse from(CartItem item) {
+    public static CartItemResponse of(CartItem item, BigDecimal totalPrice) {
         return CartItemResponse.builder()
                 .id(item.getId())
                 .productId(item.getProduct() != null ? item.getProduct().getId() : null)
                 .productName(item.getProduct() != null ? item.getProduct().getName() : null)
                 .productPrice(item.getProduct() != null ? item.getProduct().getPrice() : null)
                 .quantity(item.getQuantity())
+                .totalPrice(totalPrice)
                 .build();
     }
 }

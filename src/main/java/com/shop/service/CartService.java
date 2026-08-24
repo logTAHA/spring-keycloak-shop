@@ -1,6 +1,7 @@
 package com.shop.service;
 
 import com.shop.dto.cart.create.CreateCartResponse;
+import com.shop.dto.cart.get.CartItemResponse;
 import com.shop.dto.cart.get.CartResponse;
 import com.shop.dto.cart.item.UpdateCartItemRequest;
 import com.shop.dto.cart.item.UpdateCartItemResponse;
@@ -18,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -63,7 +66,7 @@ public class CartService {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Cart not found");
         }
 
-        return CartResponse.from(cart);
+        return mapToCartResponse(cart);
     }
 
     @Transactional
@@ -142,5 +145,35 @@ public class CartService {
                     .quantity(savedItem.getQuantity())
                     .build();
         }
+    }
+
+    private CartResponse mapToCartResponse(Cart cart) {
+        List<CartItemResponse> itemResponses = (cart.getItems() != null)
+                ? cart.getItems().stream()
+                        .map(this::mapToCartItemResponse)
+                        .toList()
+                : List.of();
+
+        BigDecimal totalPrice = calculateCartTotal(itemResponses);
+
+        return CartResponse.of(cart, itemResponses, totalPrice);
+    }
+
+    private CartItemResponse mapToCartItemResponse(CartItem item) {
+        BigDecimal itemTotal = calculateItemTotal(item);
+        return CartItemResponse.of(item, itemTotal);
+    }
+
+    private BigDecimal calculateItemTotal(CartItem item) {
+        if (item.getProduct() == null || item.getProduct().getPrice() == null || item.getQuantity() == null) {
+            return BigDecimal.ZERO;
+        }
+        return item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+    }
+
+    private BigDecimal calculateCartTotal(List<CartItemResponse> items) {
+        return items.stream()
+                .map(item -> item.totalPrice() != null ? item.totalPrice() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

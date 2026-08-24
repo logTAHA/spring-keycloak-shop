@@ -5,6 +5,7 @@ import com.shop.entity.cart.Cart;
 import com.shop.entity.cart.CartStatus;
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,18 +16,16 @@ public record CartResponse(
         String userId,
         CartStatus status,
         List<CartItemResponse> items,
+        BigDecimal totalPrice,
         LocalDateTime createdAt
 ) {
-    public static CartResponse from(Cart cart) {
-        List<CartItemResponse> itemResponses = (cart.getItems() != null)
-                ? cart.getItems().stream().map(CartItemResponse::from).toList()
-                : List.of();
-
+    public static CartResponse of(Cart cart, List<CartItemResponse> itemResponses, BigDecimal totalPrice) {
         return CartResponse.builder()
                 .id(cart.getId())
                 .userId(cart.getUserId())
                 .status(cart.getStatus())
                 .items(itemResponses)
+                .totalPrice(totalPrice)
                 .createdAt(cart.getCreatedAt())
                 .build();
     }
