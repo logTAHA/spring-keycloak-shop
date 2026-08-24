@@ -1,10 +1,12 @@
 package com.shop.controller;
 
 import com.shop.dto.ApiResponse;
-import com.shop.dto.cart.create.CreateCartRequest;
 import com.shop.dto.cart.create.CreateCartResponse;
 import com.shop.dto.cart.get.CartResponse;
+import com.shop.dto.cart.item.UpdateCartItemRequest;
+import com.shop.dto.cart.item.UpdateCartItemResponse;
 import com.shop.service.CartService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,14 +26,12 @@ public class CartController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<CreateCartResponse>> createCart(
-            @RequestBody(required = false) CreateCartRequest request,
             @AuthenticationPrincipal Jwt jwt
     ) {
         String userId = (jwt != null) ? jwt.getSubject() : "anonymous";
-        String name = (request != null) ? request.name() : null;
-        log.info("Processing create cart request (name: '{}') by user ID '{}'", name, userId);
+        log.info("Processing create cart request by user ID '{}'", userId);
 
-        CreateCartResponse response = cartService.createCart(userId, name);
+        CreateCartResponse response = cartService.createCart(userId);
 
         log.info("Cart (ID: {}) was successfully created for user ID '{}'", response.id(), userId);
 
@@ -54,5 +54,19 @@ public class CartController {
         CartResponse cart = cartService.getCartById(id, userId, isAdmin);
 
         return ResponseEntity.ok(ApiResponse.ok(cart));
+    }
+
+    @PostMapping("/items")
+    public ResponseEntity<ApiResponse<UpdateCartItemResponse>> addOrUpdateItem(
+            @Valid @RequestBody UpdateCartItemRequest request,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        String userId = (jwt != null) ? jwt.getSubject() : "anonymous";
+        log.info("Processing add/update cart item for user ID '{}', product ID {}, quantity {}",
+                userId, request.productId(), request.quantity());
+
+        UpdateCartItemResponse response = cartService.addOrUpdateItem(userId, request);
+
+        return ResponseEntity.ok(ApiResponse.ok("Cart updated successfully", response));
     }
 }

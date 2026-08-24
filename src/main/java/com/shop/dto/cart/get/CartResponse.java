@@ -12,7 +12,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record CartResponse(
         Long id,
-        String name,
         String userId,
         CartStatus status,
         List<CartItemResponse> items,
@@ -25,7 +24,6 @@ public record CartResponse(
 
         return CartResponse.builder()
                 .id(cart.getId())
-                .name(cart.getName())
                 .userId(cart.getUserId())
                 .status(cart.getStatus())
                 .items(itemResponses)

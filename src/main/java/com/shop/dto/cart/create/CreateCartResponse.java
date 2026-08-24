@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record CreateCartResponse(
         Long id,
-        String name,
         String userId,
         CartStatus status,
         LocalDateTime createdAt
@@ -19,7 +18,6 @@ public record CreateCartResponse(
     public static CreateCartResponse from(Cart cart) {
         return CreateCartResponse.builder()
                 .id(cart.getId())
-                .name(cart.getName())
                 .userId(cart.getUserId())
                 .status(cart.getStatus())
                 .createdAt(cart.getCreatedAt())

@@ -25,9 +25,6 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String name;
-
     @Column(name = "user_id", nullable = false, length = 255)
     private String userId;
 

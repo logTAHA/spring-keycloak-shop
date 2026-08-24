@@ -2,5 +2,5 @@ package com.shop.entity.cart;
 
 public enum CartStatus {
     ACTIVE,
-    CHECKOUT
+    PENDING_PAYMENT
 }

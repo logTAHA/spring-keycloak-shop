@@ -1,11 +1,18 @@
 info:
-  name: Create Cart
+  name: Upsert Cart Item
   type: http
-  seq: 7
+  seq: 9
 
 http:
   method: POST
-  url: http://localhost:8080/api/carts
+  url: http://localhost:8080/api/carts/items
+  body:
+    type: json
+    data: |-
+      {
+        "productId": 4,
+        "quantity": -10
+      }
   auth:
     type: bearer
     token: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyLXo5MS1SZ01oNEpPVGQybk8xa1lycm11eFdNT2U3SUFId29zRndSQnU4In0.eyJleHAiOjE3ODc2MTEyNzEsImlhdCI6MTc4NzYxMDk3MSwianRpIjoib25ydHJvOmU3NmM4ZTM2LTkwZTktMjk2MS03MmQwLTgzMGVkMGZhMzc4NiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODE4MC9yZWFsbXMvc2hvcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI2NGI1YjYzYy04M2EwLTQ0ODItYTg2My1lZTU3NWM2ZTcwYTQiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzaG9wLWZyb250Iiwic2lkIjoiYjFqaUxIajgzZHdWam1JU2M4ZHR2ZVVzIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtc2hvcCIsIkFETUlOIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6InNhc2FuIG1haGRhdmkiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiIsImdpdmVuX25hbWUiOiJzYXNhbiIsImZhbWlseV9uYW1lIjoibWFoZGF2aSIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIn0.O2CEnFHFYG4cT9sw9mDY5eXZKUm2JhELJI_TpsK26LyjwqVMw4y13MOMgD73AE4X88aZyrvOEX2AUPqHug1FZSg4aMJ2nP_POXz7DClhkCkzyFITwoUG1yQF2IfL0WrOX6EVZ9ruExN2fESXD4cPcBhTrNxI7Y7hzT_E5xoCCZgqBsSHIUr_OtJ8_zNl8eSDZ4Y6FFYzCYsFUkiEAnjBZKtJo6C3SCr1h7_MYmye2ONNdqdRjutfmiO53dyZT58LS6pCmgtwb29SJy-iyZhF1XY8p75Ai1qZAROMVL0Yi9JyA8GVwSUjRcsdn7aHIm1GT8VcYMqE6uKjF7AimkOFOg
