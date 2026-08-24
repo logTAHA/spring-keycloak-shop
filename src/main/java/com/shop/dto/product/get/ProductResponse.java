@@ -1,4 +1,4 @@
-package com.shop.dto.product;
+package com.shop.dto.product.get;
 
 import com.shop.entity.Product;
 import lombok.Builder;

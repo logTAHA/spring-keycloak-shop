@@ -2,16 +2,13 @@ package com.shop.controller;
 
 import com.shop.dto.ApiResponse;
 import com.shop.dto.PagedResponse;
-import com.shop.dto.product.GetProductRequest;
-import com.shop.dto.product.ProductResponse;
+import com.shop.dto.product.get.GetProductRequest;
+import com.shop.dto.product.get.ProductResponse;
 import com.shop.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/products")
@@ -27,4 +24,11 @@ public class ProductController {
         PagedResponse<ProductResponse> response = productService.getProducts(request);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
+
+//    @PostMapping
+//    public ResponseEntity<ApiResponse<?>> addOrUpdateProduct(
+//
+//    ) {
+//
+//    }
 }

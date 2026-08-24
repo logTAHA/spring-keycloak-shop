@@ -1,9 +1,9 @@
 package com.shop.service;
 
 import com.shop.dto.PagedResponse;
-import com.shop.dto.product.GetProductRequest;
-import com.shop.dto.product.ProductResponse;
-import com.shop.dto.product.ProductSortBy;
+import com.shop.dto.product.get.GetProductRequest;
+import com.shop.dto.product.get.ProductResponse;
+import com.shop.dto.product.get.ProductSortBy;
 import com.shop.entity.Product;
 import com.shop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
