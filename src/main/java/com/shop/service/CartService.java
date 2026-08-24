@@ -1,5 +1,6 @@
 package com.shop.service;
 
+import com.shop.dto.cart.checkout.CheckoutResponse;
 import com.shop.dto.cart.create.CreateCartResponse;
 import com.shop.dto.cart.get.CartItemResponse;
 import com.shop.dto.cart.get.CartResponse;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -70,7 +72,7 @@ public class CartService {
     }
 
     @Transactional
-    public UpdateCartItemResponse addOrUpdateItem(String userId, UpdateCartItemRequest request) {
+    public UpdateCartItemResponse upsertItem(String userId, UpdateCartItemRequest request) {
         log.info("Processing item update for user ID '{}', product ID {}, quantity {}",
                 userId, request.productId(), request.quantity());
 
@@ -145,6 +147,49 @@ public class CartService {
                     .quantity(savedItem.getQuantity())
                     .build();
         }
+    }
+
+    @Transactional
+    public CheckoutResponse checkout(String userId) {
+        log.info("Processing checkout for user ID '{}'", userId);
+
+        Cart cart = cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
+                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "No active cart found to checkout"));
+
+        if (cart.getItems() == null || cart.getItems().isEmpty()) {
+            log.warn("User '{}' attempted to checkout an empty cart ID {}", userId, cart.getId());
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "Cart is empty");
+        }
+
+        for (CartItem item : cart.getItems()) {
+            Product product = item.getProduct();
+            if (product == null || product.getStock() == null || product.getStock() < item.getQuantity()) {
+                String productName = (product != null) ? product.getName() : "Unknown";
+                int availableStock = (product != null && product.getStock() != null) ? product.getStock() : 0;
+                log.warn("Larger than available stock for product '{}' in cart ID {}: requested {}, available {}",
+                        productName, cart.getId(), item.getQuantity(), availableStock);
+                throw new BusinessException(HttpStatus.BAD_REQUEST,
+                        "Product '" + productName + "' quantity is larger than stock");
+            }
+        }
+
+        List<CartItemResponse> itemResponses = cart.getItems().stream()
+                .map(this::mapToCartItemResponse)
+                .toList();
+        BigDecimal totalPrice = calculateCartTotal(itemResponses);
+
+        cart.setStatus(CartStatus.PENDING_PAYMENT);
+        cartRepository.save(cart);
+        log.info("Cart ID {} status changed to PENDING_PAYMENT for user ID '{}'", cart.getId(), userId);
+
+        String mockPaymentUrl = "https://mock-gateway.com/pay/" + UUID.randomUUID();
+
+        return CheckoutResponse.builder()
+                .cartId(cart.getId())
+                .totalPrice(totalPrice)
+                .status(cart.getStatus())
+                .paymentUrl(mockPaymentUrl)
+                .build();
     }
 
     private CartResponse mapToCartResponse(Cart cart) {

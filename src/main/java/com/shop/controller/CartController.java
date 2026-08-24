@@ -1,6 +1,7 @@
 package com.shop.controller;
 
 import com.shop.dto.ApiResponse;
+import com.shop.dto.cart.checkout.CheckoutResponse;
 import com.shop.dto.cart.create.CreateCartResponse;
 import com.shop.dto.cart.get.CartResponse;
 import com.shop.dto.cart.item.UpdateCartItemRequest;
@@ -65,8 +66,20 @@ public class CartController {
         log.info("Processing add/update cart item for user ID '{}', product ID {}, quantity {}",
                 userId, request.productId(), request.quantity());
 
-        UpdateCartItemResponse response = cartService.addOrUpdateItem(userId, request);
+        UpdateCartItemResponse response = cartService.upsertItem(userId, request);
 
         return ResponseEntity.ok(ApiResponse.ok("Cart updated successfully", response));
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<ApiResponse<CheckoutResponse>> checkout(
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        String userId = (jwt != null) ? jwt.getSubject() : "anonymous";
+        log.info("Processing checkout request for user ID '{}'", userId);
+
+        CheckoutResponse response = cartService.checkout(userId);
+
+        return ResponseEntity.ok(ApiResponse.ok("Checkout initiated successfully", response));
     }
 }
