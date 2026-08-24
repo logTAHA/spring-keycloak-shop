@@ -18,6 +18,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      - shop-net
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.7.2
@@ -38,6 +40,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - shop-net
 
   app:
     build: .
@@ -47,11 +51,19 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-shop}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-shop}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-your_password_here}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/shop/protocol/openid-connect/certs
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:8180/realms/shop
     depends_on:
       postgres:
         condition: service_healthy
       keycloak:
         condition: service_started
+    networks:
+      - shop-net
+
+networks:
+  shop-net:
+    driver: bridge
 
 volumes:
   postgres_data:

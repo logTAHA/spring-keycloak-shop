@@ -1,9 +1,7 @@
 target/
-docker/
 .git/
-.idea/
-.vscode/
-.env
+.gitignore
 *.md
-mvnw
-mvnw.cmd
+api-collection/
+.idea/
+*.iml
