@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -35,6 +36,7 @@ public class SecurityConfig {
                     if (!properties.publicPaths().isEmpty()) {
                         auth.requestMatchers(properties.publicPaths().toArray(String[]::new)).permitAll();
                     }
+                    auth.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .exceptionHandling(exceptions -> exceptions
