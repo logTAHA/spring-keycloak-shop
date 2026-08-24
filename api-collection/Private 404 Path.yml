@@ -4,14 +4,19 @@ info:
   seq: 3
 
 http:
-  method: POST
-  url: localhost:8080/api/products/
-  auth:
-    type: bearer
-    token: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyLXo5MS1SZ01oNEpPVGQybk8xa1lycm11eFdNT2U3SUFId29zRndSQnU4In0.eyJleHAiOjE3ODc1ODQxMzcsImlhdCI6MTc4NzU4MzgzNywianRpIjoib25ydHJvOmFkOTVlZTg0LWQ2YWQtYzQ2OC1jZDg0LTk5NzAwOGE5NjcyNCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODE4MC9yZWFsbXMvc2hvcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI4OGUyMTE4Yy0yYTVkLTRmYzUtYTVkYi05YTQ1NGY5YzhlN2EiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzaG9wLWZyb250Iiwic2lkIjoic2ZRQk1xeHlmR0tiaU10ZEtZY2ZjUEZSIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtc2hvcCIsIkNVU1RPTUVSIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6InRhaGEgYW1pbmkiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0YWhhIiwiZ2l2ZW5fbmFtZSI6InRhaGEiLCJmYW1pbHlfbmFtZSI6ImFtaW5pIiwiZW1haWwiOiJ0YWhhLnZpc2l0QGdtYWlsLmNvbSJ9.jPx3QH2hQZ8WsG9ds6dgmpAeQE3H0Gr2GGLcbmZObOeApOrUPSqSlng0O78_pcr__0ZgBeuHIF94ie0V9pNcOK8BvvyfzGYiLC4ZsS5eVYAMhcwyiMN2S2k1e3fFnQF_NSVJVX662_nv1LjMFpJ0cHM6BVA1w5TTysE22pGXZaEl3FEXOCeeOl-2uLUqWlxUrvtJvHG0CQTQaY47-V9HXMsbeJkiQ-RsXMZtO391Z2zQsZTaf9eO317Ukxt_zHzNWMEzdj-XusuUASdj13ENs4_dW4qFTWFabMOpfgj7P_Xai83WYHkA9yZQYKymjcdvc851q_CrgbuVZ9FvTzUXEw
+  method: GET
+  url: localhost:8080/api/products?page=1.2&size=1
+  params:
+    - name: page
+      value: "1.2"
+      type: query
+    - name: size
+      value: "1"
+      type: query
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
