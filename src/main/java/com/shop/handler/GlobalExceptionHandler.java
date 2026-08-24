@@ -19,6 +19,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,9 +31,9 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ApiException.class)
-    ProblemDetail handleApiException(ApiException ex, HttpServletRequest request) {
-        log.warn("Business exception on {} {}: {} -> {}",
+    @ExceptionHandler(BusinessException.class)
+    ProblemDetail handleApiException(BusinessException ex, HttpServletRequest request) {
+        log.info("Business exception on {} {}: {} -> {}",
                 request.getMethod(), request.getRequestURI(),
                 ex.status(), ex.getMessage()
         );
@@ -45,7 +47,7 @@ public class GlobalExceptionHandler {
                         Collectors.groupingBy(
                                 FieldError::getField,
                                 LinkedHashMap::new,
-                                Collectors.mapping(FieldError::getDefaultMessage, Collectors.toList())
+                                Collectors.mapping(this::resolveErrorMessage, Collectors.toList())
                         )
                 );
 
@@ -57,6 +59,39 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = problem(HttpStatus.BAD_REQUEST, "Request validation failed", request);
         problem.setProperty("errors", errors);
         return problem;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        log.warn("Type mismatch on {} {}: parameter '{}'",
+                request.getMethod(), request.getRequestURI(), ex.getName()
+        );
+        ProblemDetail problem = problem(HttpStatus.BAD_REQUEST, "Request validation failed", request);
+        String requiredTypeName = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "valid type";
+        String actualTypeName = ex.getValue() != null ? ex.getValue().getClass().getSimpleName() : "unknown";
+        String message = "Expected type '%s' for parameter '%s', but received '%s'".formatted(requiredTypeName, ex.getName(), actualTypeName);
+        problem.setProperty("errors", List.of(Map.of(ex.getName(), List.of(message))));
+        return problem;
+    }
+
+    private String resolveErrorMessage(FieldError error) {
+        if (error.isBindingFailure()) {
+            String requiredTypeName = "valid type";
+            try {
+                TypeMismatchException typeMismatch = error.unwrap(TypeMismatchException.class);
+                if (typeMismatch.getRequiredType() != null) {
+                    requiredTypeName = typeMismatch.getRequiredType().getSimpleName();
+                }
+            } catch (Exception ignored) {
+            }
+
+            String actualTypeName = (error.getRejectedValue() != null)
+                    ? error.getRejectedValue().getClass().getSimpleName()
+                    : "null";
+
+            return "Expected type '%s' for field '%s', but received '%s'".formatted(requiredTypeName, error.getField(), actualTypeName);
+        }
+        return error.getDefaultMessage() != null ? error.getDefaultMessage() : "Invalid field value";
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
