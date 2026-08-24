@@ -8,7 +8,7 @@ import com.shop.dto.product.get.GetProductRequest;
 import com.shop.dto.product.get.ProductDetailResponse;
 import com.shop.dto.product.get.ProductResponse;
 import com.shop.dto.product.get.ProductSortBy;
-import com.shop.entity.Product;
+import com.shop.entity.product.Product;
 import com.shop.handler.BusinessException;
 import com.shop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;

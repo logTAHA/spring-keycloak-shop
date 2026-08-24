@@ -1,7 +1,7 @@
 package com.shop.dto.product.get;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.shop.entity.Product;
+import com.shop.entity.product.Product;
 import lombok.Builder;
 import java.math.BigDecimal;
 
