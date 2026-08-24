@@ -5,14 +5,7 @@ info:
 
 http:
   method: GET
-  url: localhost:8080/api/products?page=1.2&size=1
-  params:
-    - name: page
-      value: "1.2"
-      type: query
-    - name: size
-      value: "1"
-      type: query
+  url: localhost:8080/api/not-exist-page
 
 settings:
   encodeUrl: true
