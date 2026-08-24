@@ -10,7 +10,7 @@ import lombok.Builder;
 import java.math.BigDecimal;
 
 @Builder
-public record AddProductRequest(
+public record UpsertProductRequest(
         @NotBlank(message = "Product name is required")
         @Size(min = 1, max = 255, message = "Product name must be between 1 and 255 characters")
         String name,
