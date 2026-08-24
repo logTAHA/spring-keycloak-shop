@@ -5,11 +5,11 @@ import org.springframework.http.HttpStatus;
 /**
  * Base exception for business failures; carries the HTTP status directly.
  */
-public class ApiException extends RuntimeException {
+public class BusinessException extends RuntimeException {
 
     private final HttpStatus status;
 
-    public ApiException(HttpStatus status, String message) {
+    public BusinessException(HttpStatus status, String message) {
         super(message);
         this.status = status;
     }

@@ -29,8 +29,8 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ApiException.class)
-    ProblemDetail handleApiException(ApiException ex, HttpServletRequest request) {
+    @ExceptionHandler(BusinessException.class)
+    ProblemDetail handleApiException(BusinessException ex, HttpServletRequest request) {
         log.warn("Business exception on {} {}: {} -> {}",
                 request.getMethod(), request.getRequestURI(),
                 ex.status(), ex.getMessage()
