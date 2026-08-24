@@ -6,7 +6,7 @@ services:
     image: postgres:17-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-shop}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-shop_secret}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-your_password_here}
       POSTGRES_DB: ${POSTGRES_DB:-shop}
     ports:
       - "5432:5432"
@@ -26,13 +26,13 @@ services:
       - ./docker/keycloak/import:/opt/keycloak/data/import
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:-admin}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin_secret}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-your_password_here}
       KC_HOSTNAME: localhost
       KC_HOSTNAME_PORT: 8180
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: ${POSTGRES_USER:-shop}
-      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-shop_secret}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-your_password_here}
     ports:
       - "8180:8080"
     depends_on:
@@ -46,7 +46,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-shop}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-shop}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-shop_secret}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-your_password_here}
     depends_on:
       postgres:
         condition: service_healthy
