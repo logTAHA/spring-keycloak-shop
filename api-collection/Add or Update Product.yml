@@ -1,0 +1,24 @@
+info:
+  name: Add or Update Product
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: localhost:8080/api/products
+  body:
+    type: json
+    data: |-
+      {
+        
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyLXo5MS1SZ01oNEpPVGQybk8xa1lycm11eFdNT2U3SUFId29zRndSQnU4In0.eyJleHAiOjE3ODc1OTQ4MTcsImlhdCI6MTc4NzU5NDUxNywianRpIjoib25ydHJvOjU5MmY5Yjg1LWMwODctOWIwYy1iODg4LWEyNjE3NjM5ZjIyMiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODE4MC9yZWFsbXMvc2hvcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI4OGUyMTE4Yy0yYTVkLTRmYzUtYTVkYi05YTQ1NGY5YzhlN2EiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzaG9wLWZyb250Iiwic2lkIjoiX1VCTEdaRnFObGpOZGVOSm1kM3piRUMtIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtc2hvcCIsIkNVU1RPTUVSIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6InRhaGEgYW1pbmkiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0YWhhIiwiZ2l2ZW5fbmFtZSI6InRhaGEiLCJmYW1pbHlfbmFtZSI6ImFtaW5pIiwiZW1haWwiOiJ0YWhhLnZpc2l0QGdtYWlsLmNvbSJ9.kynqgSkH8Owaueb50ZoXBjGAzL6loLsd77YlQWLuTfBiJ_kzNwyFXfyBZPQf92rtkHjGW1_1lxbNsedOs1hT9RU2nS8COM8fWyvLlFx3ErD4rH6XKjYVM6nopwyCuZKD2knZHw4C_1h7vx7giXfsZexKq5hMo_fqNe_09xV1TJ4xnFfPNVhV65R33soVl50oHbWBKl_JYGvmUctXfJpje2mhNUaQai5gQL7AAVZCSmAP_WWJ8DYpqw3ydpZrLQZuA5c_hDRjcKZ27rnnnKAWAm6--elih1siktburHTG8LgpgLIMvrNOYex3ze_xRIJ5wsx-Nyyw8So2bTlANTwjCA
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

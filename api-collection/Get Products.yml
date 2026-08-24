@@ -5,9 +5,7 @@ info:
 
 http:
   method: GET
-  url: |-
-    localhost:8080/api/products?page=0&size=10&sortBy=PRICE_DESC
-    &inStockOnly=true
+  url: localhost:8080/api/products?page=0&size=10&sortBy=PRICE_DESC&inStockOnly=true
   params:
     - name: page
       value: "0"
@@ -16,8 +14,7 @@ http:
       value: "10"
       type: query
     - name: sortBy
-      value: |
-        PRICE_DESC
+      value: PRICE_DESC
       type: query
     - name: inStockOnly
       value: "true"
