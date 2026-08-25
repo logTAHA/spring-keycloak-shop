@@ -1,124 +1,105 @@
 # Spring Boot & Keycloak E-Commerce API
 
-A full-featured e-commerce backend API built with Spring Boot 4, PostgreSQL, and Keycloak for identity and access management (OAuth2 / OIDC).
+E-Commerce REST API built with Spring Boot 4, PostgreSQL, and Keycloak (OAuth2 / OIDC).
 
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Architecture and Tech Stack](#architecture-and-tech-stack)
-- [Installation and Quick Start](#installation-and-quick-start)
-  - [Prerequisites](#prerequisites)
-  - [Step 1: Clone the Repository](#step-1-clone-the-repository)
-  - [Step 2: Configure Environment Variables](#step-2-configure-environment-variables)
-  - [Step 3: Start Services with Docker Compose](#step-3-start-services-with-docker-compose)
-- [Pre-configured Users and Authentication](#pre-configured-users-and-authentication)
-- [API Overview](#api-overview)
-  - [Authentication Endpoint](#authentication-endpoint)
-  - [Products Endpoints](#products-endpoints)
-  - [Cart Endpoints](#cart-endpoints)
-- [API Testing with Bruno Collection](#api-testing-with-bruno-collection)
-- [Environment Variables Reference](#environment-variables-reference)
-- [Managing the Services](#managing-the-services)
+- [Installation](#installation)
+- [Pre-configured Users](#pre-configured-users)
+- [API Endpoints](#api-endpoints)
+- [API Testing](#api-testing)
+- [Environment Variables](#environment-variables)
+- [Managing Services](#managing-services)
 
 ---
 
 ## Overview
 
-This project provides an e-commerce API with role-based access control. Authentication and authorization are handled via Keycloak as an OAuth2 Resource Server emitting JWT tokens with realm roles (`ADMIN`, `CUSTOMER`).
+E-Commerce backend API with role-based access control (RBAC), automated database initialization, and pre-configured IAM realm import.
 
-The repository includes:
-- Automated CI/CD workflow via GitHub Actions that builds and publishes production-ready Docker images to Docker Hub.
-- Automated database initialization scripts for multi-database PostgreSQL setup.
-- Automated Keycloak realm configuration import (`shop` realm) on container startup.
-- Sample dataset preloaded on first application launch.
+### Tech Stack
 
----
-
-## Architecture and Tech Stack
-
-- **Framework**: Spring Boot 4.1.1 (Java 21)
+- **Backend**: Spring Boot 4.1.1 (Java 21), Spring Data JPA
 - **Security**: Spring Security 6 (OAuth2 Resource Server / JWT)
-- **Identity Provider**: Keycloak 26.7.2
-- **Database**: PostgreSQL 17 (Alpine)
-- **Persistence**: Spring Data JPA / Hibernate
-- **Containerization**: Docker & Docker Compose
-- **CI/CD**: GitHub Actions (Docker Hub automated builds)
+- **IAM**: Keycloak 26.7.2
+- **Database**: PostgreSQL 17
+- **DevOps**: Docker, Docker Compose & GitHub Actions (Docker Hub CI/CD)
 
 ---
 
-## Installation and Quick Start
+## Installation
 
 ### Prerequisites
 
-Ensure you have the following installed on your system:
-- Docker (version 24.0 or higher)
-- Docker Compose (Compose V2 recommended)
+- Docker & Docker Compose
 
-### Step 1: Clone the Repository
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/logTAHA/spring-keycloak-shop.git
 cd spring-keycloak-shop
 ```
 
-### Step 2: Configure Environment Variables
+### 2. Configure Environment
 
-The repository includes a template file `.env.example`. Copy it to create your local `.env` configuration file:
+Copy `.env.example` to `.env` and adjust credentials as needed:
 
 ```bash
 cp .env.example .env
 ```
 
-Open `.env` in your text editor and update the default passwords and credentials as required:
-
 ```env
-# PostgreSQL Configuration
+# PostgreSQL
 POSTGRES_USER=shop
-POSTGRES_PASSWORD=your_secure_password_here
+POSTGRES_PASSWORD=your_password_here
 POSTGRES_DB=shop
 
-# Keycloak Master Admin Credentials
+# Keycloak Admin
 KEYCLOAK_ADMIN_USERNAME=admin
-KEYCLOAK_ADMIN_PASSWORD=your_secure_password_here
+KEYCLOAK_ADMIN_PASSWORD=your_password_here
 ```
 
-### Step 3: Start Services with Docker Compose
+### 3. Start Services
 
-Run the following command to download and start all containers in detached mode:
+#### Option A: Use Pre-built Image (Recommended)
+
+Pulls the pre-built image from Docker Hub (`logtaha/spring-keycloak-shop:latest`) published by GitHub Actions:
 
 ```bash
 docker compose up -d
 ```
 
-> **Note on Docker Images**:
-> The application image is automatically built and published to Docker Hub (`logtaha/spring-keycloak-shop:latest`) on every push to the `main` branch via GitHub Actions CI/CD workflow.
-> Docker Compose pulls the pre-built image directly from Docker Hub. You do not need to build the image locally or have Java / Maven installed on your host machine.
+#### Option B: Build Locally from Source
 
-Verify that all containers are healthy and running:
+Builds the image locally using the `Dockerfile`:
 
 ```bash
-docker compose ps
+docker compose up -d --build
 ```
 
-The services will be accessible at the following URLs:
-- **Spring Boot API**: `http://localhost:8080`
-- **Keycloak Admin Console**: `http://localhost:8180`
-- **PostgreSQL Database**: `localhost:5432`
+### Service URLs
+
+- **API**: `http://localhost:8080`
+- **Keycloak**: `http://localhost:8180`
+- **PostgreSQL**: `localhost:5432`
 
 ---
 
-## Pre-configured Users and Authentication
+## Pre-configured Users
 
-The Keycloak realm (`shop`) is automatically imported on startup with the client `shop-front` and the following pre-configured user accounts:
+The `shop` realm comes pre-configured with the `shop-front` client and the following accounts:
 
-| Username | Password | Role | Description |
+| Username | Password | Role | Access |
 | :--- | :--- | :--- | :--- |
-| `admin` | `admin` | `ADMIN` | Full access to manage products, view any cart, and manage the system |
-| `taha` | `taha` | `CUSTOMER` | Customer access to manage own cart, add items, and checkout |
+| `admin` | `admin` | `ADMIN` | Manage products and view all carts |
+| `taha` | `taha` | `CUSTOMER` | Manage own cart and checkout |
 
-To obtain a JWT access token, send a request to Keycloak's token endpoint:
+### Get JWT Token
+
+You can execute the pre-configured `Login` request in `api-collection/` or use `curl`:
 
 ```bash
 curl -X POST "http://localhost:8180/realms/shop/protocol/openid-connect/token" \
@@ -129,99 +110,68 @@ curl -X POST "http://localhost:8180/realms/shop/protocol/openid-connect/token" \
   -d "password=taha"
 ```
 
-Use the returned `access_token` in the `Authorization` header for protected endpoints:
-```text
-Authorization: Bearer <your_access_token>
-```
-
 ---
 
-## API Overview
+## API Endpoints
 
-### Authentication Endpoint
+Application APIs run on port **`8080`** (`http://localhost:8080`). Authentication is handled by Keycloak on port **`8180`** (`http://localhost:8180`), returning JWT access and refresh tokens.
 
-- **POST** `http://localhost:8180/realms/shop/protocol/openid-connect/token`: Exchange credentials for a JWT access and refresh token.
+### Auth (Keycloak - Port 8180)
 
-### Products Endpoints
-
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/products` | Public | List products with pagination, filtering, and sorting |
-| `GET` | `/api/products/{identifier}` | Public | Get product details by ID or slug (extended details for Admin) |
-| `POST` | `/api/products` | `ADMIN` | Create or update a product |
-
-### Cart Endpoints
-
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/carts` | Authenticated | Create a new active shopping cart for the user |
-| `GET` | `/api/carts/{id}` | Authenticated | Get cart by ID (Owner or Admin only) |
-| `POST` | `/api/carts/items` | Authenticated | Add, update, or remove items in the cart |
-| `POST` | `/api/carts/checkout` | Authenticated | Checkout the active cart |
-
----
-
-## API Testing with Bruno Collection
-
-An API request collection is included in the `api-collection/` folder. You can open and execute these requests using [Bruno](https://www.usebruno.com/) or any compatible API client:
-
-- `Login.yml`: Obtain JWT token using pre-configured users.
-- `Refresh.yml`: Refresh expired JWT access token.
-- `Get Products.yml`: Retrieve list of products.
-- `Get Product.yml`: Retrieve single product details.
-- `Upsert Product.yml`: Create/update product (Admin token required).
-- `Create Cart.yml`: Create user cart.
-- `Upsert Cart Item.yml`: Add/update items inside cart.
-- `Get Cart By Id.yml`: Retrieve user cart with line items and totals.
-- `Checkout Cart.yml`: Complete cart checkout.
-
----
-
-## Environment Variables Reference
-
-| Variable | Default Value | Description |
+| Endpoint | Method | Description |
 | :--- | :--- | :--- |
-| `POSTGRES_USER` | `shop` | Username for PostgreSQL databases (`shop` and `keycloak`) |
-| `POSTGRES_PASSWORD` | `your_password_here` | Password for PostgreSQL |
-| `POSTGRES_DB` | `shop` | Name of the application PostgreSQL database |
-| `KEYCLOAK_ADMIN_USERNAME` | `admin` | Keycloak master administrator username |
-| `KEYCLOAK_ADMIN_PASSWORD` | `your_password_here` | Keycloak master administrator password |
+| `/realms/shop/protocol/openid-connect/token` | `POST` | Login or refresh JWT token |
+
+### Products (Port 8080)
+
+| Method | Endpoint | Auth | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/products` | Public | List products (paginated) |
+| `GET` | `/api/products/{identifier}` | Public | Get product by ID or slug |
+| `POST` | `/api/products` | `ADMIN` | Create / update product |
+
+### Cart (Port 8080)
+
+| Method | Endpoint | Auth | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/carts` | User | Create cart |
+| `GET` | `/api/carts/{id}` | User / Admin | Get cart by ID |
+| `POST` | `/api/carts/items` | User | Add / update items |
+| `POST` | `/api/carts/checkout` | User | Checkout cart |
 
 ---
 
-## Managing the Services
+## API Testing
 
-### View Container Logs
+A Bruno collection is available in the `api-collection/` directory:
 
-To stream logs from all running services:
+- `Login.yml` / `Refresh.yml`: Auth tokens
+- `Get Products.yml` / `Get Product.yml` / `Upsert Product.yml`: Product requests
+- `Create Cart.yml` / `Upsert Cart Item.yml` / `Get Cart By Id.yml` / `Checkout Cart.yml`: Cart requests
+
+---
+
+## Environment Variables
+
+| Variable | Default | Description |
+| :--- | :--- | :--- |
+| `POSTGRES_USER` | `shop` | PostgreSQL username |
+| `POSTGRES_PASSWORD` | `your_password_here` | PostgreSQL password |
+| `POSTGRES_DB` | `shop` | Application database name |
+| `KEYCLOAK_ADMIN_USERNAME` | `admin` | Keycloak admin user |
+| `KEYCLOAK_ADMIN_PASSWORD` | `your_password_here` | Keycloak admin password |
+
+---
+
+## Managing Services
 
 ```bash
+# View logs
 docker compose logs -f
-```
 
-To view logs for a specific service:
-
-```bash
-# Application logs
-docker compose logs -f app
-
-# Keycloak logs
-docker compose logs -f keycloak
-
-# PostgreSQL logs
-docker compose logs -f postgres
-```
-
-### Stop Containers
-
-To stop and remove containers while preserving persistent volumes (database data):
-
-```bash
+# Stop services
 docker compose down
-```
 
-To stop containers and delete all data volumes (resets database and starts fresh):
-
-```bash
+# Stop services and remove volumes (resets database)
 docker compose down -v
 ```
